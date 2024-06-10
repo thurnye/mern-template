@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import { experimentalStyled as styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import { Link } from '@mui/material';
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -16,6 +17,24 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: 'center',
   color: theme.palette.text.secondary,
 }));
+
+function Copyright(props) {
+  return (
+    <Typography
+      variant='body2'
+      color='text.secondary'
+      align='center'
+      {...props}
+    >
+      {'Copyright © '}
+      <Link color='inherit' href='https://danthurnye.com/' target='_blank'>
+        DANIEL TAMUNOTONYE
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 
 
 const Home = () => {
@@ -50,6 +69,8 @@ const Home = () => {
       </Grid>
     </Box>
       </CardContent>
+
+      <Copyright sx={{ mt: 8, mb: 4 }} />
     </Card>
   </div>
 );}

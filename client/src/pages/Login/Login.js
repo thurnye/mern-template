@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import styles from './Login.module.css';
@@ -18,6 +18,7 @@ import Container from '@mui/material/Container';
 import { decodeJWToken } from '../../util/helperFunc';
 import services from '../../util/services';
 import { userActions } from '../../store/userSlice';
+import RequestFeedback from '../../components/RequestFeedback/RequestFeedback';
 
 function Copyright(props) {
   return (
@@ -42,10 +43,27 @@ const defaultTheme = createTheme();
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [data, setData] = useState();
+  
+
+  // FeedBack States
+  const [open, setOpen] = useState(false);
+  const [reqLoading, setReqLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [showCancel, setShowCancel] = useState(false);
+  const [message, setMessage] = useState('')
 
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
+      setIsError(false);
+      setSaved(false);
+      setReqLoading(true);
+      setOpen(true);
+      setMessage('');
+      setShowCancel(false);
+
       const data = new FormData(event.currentTarget);
       const loginData = {
         email: data.get('email'),
@@ -60,9 +78,17 @@ const Login = () => {
           user: userDoc,
         })
       );
+      setReqLoading(false);
       navigate('/');
     } catch (error) {
-      console.log(error);
+      console.log("ERROR:::", error);
+      const errMsg = error.response?.data
+      setMessage(errMsg)
+      setReqLoading(false);
+      setShowCancel(false)
+      setSaved(false);
+      setIsError(true);
+      setOpen(true);
     }
   };
 
@@ -138,8 +164,27 @@ const Login = () => {
             </Box>
           </Box>
           <Copyright sx={{ mt: 8, mb: 4 }} />
+
+          <RequestFeedback
+          successMessage={message}
+          errorMessage={message}
+          open={open}
+          setOpen={setOpen}
+          loading={reqLoading}
+          isError={isError}
+          saved={saved}
+          showCancel={showCancel}
+          handleError={() => setOpen(!open)}
+          errorBtnLabel={'close'}
+          handleSuccess={() => {
+            setOpen(!open)
+            navigate('/all')
+          }}
+          successBtnLabel={'close'}
+        />
         </Container>
       </ThemeProvider>
+      
     </div>
   );
 };

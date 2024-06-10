@@ -111,14 +111,7 @@ const NavBar = () => {
 
             {/* Large Screen */}
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-              {pages.map((page) => (
-                // <Button
-                //   key={page}
-                //   onClick={handleCloseNavMenu}
-                //   sx={{ my: 2, color: 'white', display: 'block' }}
-                // >
-                //   {page}
-                // </Button>
+              {user && pages.map((page) => (
                 <Box
                   key={getRandomInt()}
                   sx={{ m: 2, display: 'block', fontSize: 20 }}

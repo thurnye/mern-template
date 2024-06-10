@@ -11,6 +11,7 @@ import SignUp from './pages/SignUp/SignUp';
 import Single from './pages/Single/Single';
 import ViewAll from './pages/ViewAll/ViewAll';
 import { Container } from '@mui/material';
+import NoMatch from './pages/NoMatch/NoMatch';
 
 // Utility function to check if token is expired
 const isTokenExpired = (token) => {
@@ -54,6 +55,7 @@ function App() {
             <Route path='/login' element={<Login />} />
             <Route path='/signup' element={<SignUp />} />
             </>} 
+            <Route path="*" element={<NoMatch />} />
           </Routes>
         </Container>
       </BrowserRouter>

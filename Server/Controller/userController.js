@@ -1,23 +1,18 @@
-//this is the server controller where i do send data to the back end....
+// UserController
 const User = require('../Model/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 6;
 
-
-
-
-
 //Creating A User
 const postUser = async (req, res, next) => {
   try {
-    console.log(req.body);
-    const id = req.body.id
+    const id = req.body.id;
     let savedUser = null;
-    if(!id) {
+    if (!id) {
       // Create New User
       const hashedPassword = await bcrypt.hash(req.body.password, SALT_ROUNDS);
-  
+
       const newUser = new User({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -26,21 +21,22 @@ const postUser = async (req, res, next) => {
       });
       savedUser = await newUser.save();
     }
-    if(id){
+    if (id) {
       // Update User
       const updateUser = await User.findById(id);
 
       if (!updateUser) {
-        throw new Error('User not found');
+        res.status(400).json('No User Found!!');
+        return;
       }
 
       updateUser.firstName = req.body.firstName;
       updateUser.lastName = req.body.lastName;
       updateUser.email = req.body.email;
-      
+
       savedUser = await updateUser.save();
     }
-    
+
     const user = await User.findById(savedUser._id)
       .select('firstName lastName _id')
       .lean();
@@ -50,7 +46,7 @@ const postUser = async (req, res, next) => {
     res.status(200).json(token);
   } catch (err) {
     console.log(err);
-    res.status(400).json('Bad Credentials');
+    res.status(400).json('Something went Wrong!');
   }
 };
 
@@ -60,19 +56,26 @@ const getLogIn = async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
+    if (!email || !password) {
+      res.status(400).json('Email or Password is Invalid!!');
+      return;
+    }
+
     // Find the user and select necessary fields
     const user = await User.findOne({ email })
       .select('firstName lastName email password')
       .lean();
 
     if (!user) {
-      throw new Error('User not found');
+      res.status(400).json('Email or Password is Invalid!!');
+      return;
     }
 
     // Check the password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new Error('Invalid password');
+      res.status(400).json('Email or Password is Invalid!!');
+      return;
     }
 
     const loggedUser = {
@@ -89,7 +92,7 @@ const getLogIn = async (req, res) => {
     res.status(200).json(token);
   } catch (error) {
     console.log(error);
-    res.status(400).json('Bad Credentials');
+    res.status(400).json('Something went Wrong!!');
   }
 };
 
@@ -110,12 +113,13 @@ const getAllUsers = async (req, res, next) => {
 const getAUserByID = async (req, res, next) => {
   try {
     const id = req.params.id;
-    console.log(id)
+    console.log(id);
     const user = await User.findById(id)
       .select('firstName lastName email _id')
       .lean();
     if (!user) {
-      throw new Error('Something Went Wrong!.');
+      res.status(400).json('User Not Found!.');
+      return;
     }
     res.status(200).json(user);
   } catch (error) {
@@ -128,19 +132,17 @@ const getAUserByID = async (req, res, next) => {
 const postDeleteUser = async (req, res, next) => {
   try {
     const id = req.params.id;
-    console.log(id);
-    const deletedUser = await User.findByIdAndDelete(id)
+    const user = await User.findByIdAndDelete(id);
+    console.log(user);
+    if (!user) {
+      res.status(400).json('User Not Found!.');
+      return;
+    }
     res.status(200).json();
-    
   } catch (error) {
-    console.log(error)
+    console.log(error);
+    res.status(400).json('Something Went Wrong!.');
   }
-  // await User.findByIdAndDelete(id)
-  //   .then((result) => {
-  //     console.log(result);
-  //     res.status(200).json(result);
-  //   })
-  //   .catch((err) => res.status(400).json(err));
 };
 
 module.exports = {
