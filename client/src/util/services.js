@@ -9,6 +9,9 @@ class StuffDataService {
   postLogin(data) {
     return http.post(`/user/login`, data);
   }
+  postGoogleLoginIn(data) {
+    return http.post(`/user/google/login`, data);
+  }
   
   findAllUsers() {
     return http.get("/user");
@@ -21,6 +24,7 @@ class StuffDataService {
   removeUser(id) {
     return http.post(`/user/${id}`);
   }
+
 
 
 }

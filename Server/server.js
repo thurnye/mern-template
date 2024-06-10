@@ -8,7 +8,7 @@ require('dotenv').config();
 const db = require('./DataBase/index');
 const route = require('./Routes/routes');
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 9000;
 const app = express();
 app.use(logger('dev'));
 app.use(express.json());

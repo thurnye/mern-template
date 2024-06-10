@@ -46,7 +46,8 @@ const Home = () => {
     "React-Router",
     "JWT",
     "NodeJs/Express",
-    "Mongo DB"
+    "Mongo DB",
+    "Google Auth"
   ];
   return(
   <div className={styles.Home}>

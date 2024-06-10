@@ -19,6 +19,8 @@ import { decodeJWToken } from '../../util/helperFunc';
 import services from '../../util/services';
 import { userActions } from '../../store/userSlice';
 import RequestFeedback from '../../components/RequestFeedback/RequestFeedback';
+import { Divider } from '@mui/material';
+import Google from '../../components/Google/Google';
 
 function Copyright(props) {
   return (
@@ -44,7 +46,6 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [data, setData] = useState();
-  
 
   // FeedBack States
   const [open, setOpen] = useState(false);
@@ -52,7 +53,7 @@ const Login = () => {
   const [isError, setIsError] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState('');
 
   const handleSubmit = async (event) => {
     try {
@@ -81,11 +82,11 @@ const Login = () => {
       setReqLoading(false);
       navigate('/');
     } catch (error) {
-      console.log("ERROR:::", error);
-      const errMsg = error.response?.data
-      setMessage(errMsg)
+      console.log('ERROR:::', error);
+      const errMsg = error.response?.data;
+      setMessage(errMsg);
       setReqLoading(false);
-      setShowCancel(false)
+      setShowCancel(false);
       setSaved(false);
       setIsError(true);
       setOpen(true);
@@ -149,6 +150,24 @@ const Login = () => {
               >
                 Sign In
               </Button>
+              {/* Sign up with Google */}
+              <Box sx={{mb:3}}>
+                <Box
+                  display='flex'
+                  alignItems='center'
+                  justifyContent='center'
+                  width='100%'
+                  my={2}
+                >
+                  <Box flexGrow={1} borderBottom='1px solid #cecece' />
+                  <Typography variant='body2' mx={2} color='text.secondary'>
+                    or
+                  </Typography>
+                  <Box flexGrow={1} borderBottom='1px solid #cecece' />
+                </Box>
+                <Google />
+              </Box>
+
               <Grid container>
                 <Grid item xs>
                   <Link href='#' variant='body2'>
@@ -166,25 +185,24 @@ const Login = () => {
           <Copyright sx={{ mt: 8, mb: 4 }} />
 
           <RequestFeedback
-          successMessage={message}
-          errorMessage={message}
-          open={open}
-          setOpen={setOpen}
-          loading={reqLoading}
-          isError={isError}
-          saved={saved}
-          showCancel={showCancel}
-          handleError={() => setOpen(!open)}
-          errorBtnLabel={'close'}
-          handleSuccess={() => {
-            setOpen(!open)
-            navigate('/all')
-          }}
-          successBtnLabel={'close'}
-        />
+            successMessage={message}
+            errorMessage={message}
+            open={open}
+            setOpen={setOpen}
+            loading={reqLoading}
+            isError={isError}
+            saved={saved}
+            showCancel={showCancel}
+            handleError={() => setOpen(!open)}
+            errorBtnLabel={'close'}
+            handleSuccess={() => {
+              setOpen(!open);
+              navigate('/all');
+            }}
+            successBtnLabel={'close'}
+          />
         </Container>
       </ThemeProvider>
-      
     </div>
   );
 };

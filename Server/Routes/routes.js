@@ -7,6 +7,9 @@ router.post('/user', userController.postUser);
 // Login
 router.post('/user/login', userController.getLogIn);
 
+// Login Google
+router.post('/user/google/login', userController.getGoogleLogIn);
+
 //get all users
 router.get('/user', userController.getAllUsers)
 

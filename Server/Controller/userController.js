@@ -9,6 +9,10 @@ const postUser = async (req, res, next) => {
   try {
     const id = req.body.id;
     let savedUser = null;
+    if (!req.body.email || !req.body.password) {
+      res.status(400).json('Missing Field Needed!');
+      return;
+    }
     if (!id) {
       // Create New User
       const hashedPassword = await bcrypt.hash(req.body.password, SALT_ROUNDS);
@@ -18,6 +22,7 @@ const postUser = async (req, res, next) => {
         lastName: req.body.lastName,
         email: req.body.email,
         password: hashedPassword,
+        googleId: req.body.googleId,
       });
       savedUser = await newUser.save();
     }
@@ -96,6 +101,49 @@ const getLogIn = async (req, res) => {
   }
 };
 
+// Login a User
+const getGoogleLogIn = async (req, res) => {
+  try {
+    const email = req.body.email;
+    let user;
+
+    console.log(req.body)
+
+    // Find the user and select necessary fields
+     user = await User.findOne({ email })
+      .select('firstName lastName email password')
+      .lean();
+
+    if (!user) {
+      // create user for google login if user not found!
+      const newUser = new User({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        password: '',
+        googleId: req.body.googleId,
+      });
+      user = await newUser.save();
+    }
+    
+    const loggedUser = {
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+    };
+
+    const token = jwt.sign({ user: loggedUser }, process.env.SECRET, {
+      expiresIn: '24h',
+    });
+    // send a response to the front end
+    res.status(200).json(token);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json('Something went Wrong!!');
+  }
+};
+
 //RETRIEVE ALL USER
 const getAllUsers = async (req, res, next) => {
   try {
@@ -151,4 +199,5 @@ module.exports = {
   getAUserByID,
   postDeleteUser,
   getLogIn,
+  getGoogleLogIn
 };

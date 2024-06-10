@@ -20,6 +20,7 @@ import { decodeJWToken } from '../../util/helperFunc';
 import { userActions } from '../../store/userSlice';
 import Spinner from '../../components/Spinner/Spinner';
 import RequestFeedback from '../../components/RequestFeedback/RequestFeedback';
+import Google from '../../components/Google/Google';
 
 function Copyright(props) {
   return (
@@ -237,9 +238,30 @@ const SignUp = () => {
                 >
                   {id ? 'Update' : 'Sign Up'}
                 </Button>
+
+                {/* Sign up with Google */}
+                {!id && (
+                  <Box sx={{ mb: 3 }}>
+                    <Box
+                      display='flex'
+                      alignItems='center'
+                      justifyContent='center'
+                      width='100%'
+                      my={2}
+                    >
+                      <Box flexGrow={1} borderBottom='1px solid #cecece' />
+                      <Typography variant='body2' mx={2} color='text.secondary'>
+                        or
+                      </Typography>
+                      <Box flexGrow={1} borderBottom='1px solid #cecece' />
+                    </Box>
+                    <Google />
+                  </Box>
+                )}
+
                 {!id && (
                   <Grid container justifyContent='flex-end'>
-                    <Grid item>
+                    <Grid item sx={{m: 'auto'}}>
                       <Link href='/login' variant='body2'>
                         Already have an account? Sign in
                       </Link>
