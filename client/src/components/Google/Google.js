@@ -54,7 +54,7 @@ const Google = () => {
           googleId,
         };
         console.log(userData)
-        const result = await services.postGoogleLoginIn(userData);
+        const result = await services.postGoogleLogin(userData);
         const token = result.data;
         console.log(result)
         localStorage.setItem('token', token);

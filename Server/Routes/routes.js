@@ -10,6 +10,10 @@ router.post('/user/login', userController.getLogIn);
 // Login Google
 router.post('/user/google/login', userController.getGoogleLogIn);
 
+
+// Forgotten Password
+router.post('/user/forgottenPassword/login', userController.PostForgottenPassword);
+
 //get all users
 router.get('/user', userController.getAllUsers)
 

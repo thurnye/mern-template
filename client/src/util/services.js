@@ -9,8 +9,13 @@ class StuffDataService {
   postLogin(data) {
     return http.post(`/user/login`, data);
   }
-  postGoogleLoginIn(data) {
+  
+  postGoogleLogin(data) {
     return http.post(`/user/google/login`, data);
+  }
+  
+  postForgottenPassword(data) {
+    return http.post(`/user/forgottenPassword/login`, data);
   }
   
   findAllUsers() {

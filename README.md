@@ -21,7 +21,7 @@ In the project directory, you can run:
 
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) for th client side
-(http://localhost:8000) for the server side
+(http://localhost:9000) for the server side
 
 To connect to the database - MongoDB
 * add a .env file in the root repo and added your database connection string;

@@ -3,6 +3,7 @@ const User = require('../Model/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 6;
+const {mailService} = require('../Services/email.services')
 
 //Creating A User
 const postUser = async (req, res, next) => {
@@ -107,10 +108,10 @@ const getGoogleLogIn = async (req, res) => {
     const email = req.body.email;
     let user;
 
-    console.log(req.body)
+    console.log(req.body);
 
     // Find the user and select necessary fields
-     user = await User.findOne({ email })
+    user = await User.findOne({ email })
       .select('firstName lastName email password')
       .lean();
 
@@ -125,7 +126,7 @@ const getGoogleLogIn = async (req, res) => {
       });
       user = await newUser.save();
     }
-    
+
     const loggedUser = {
       _id: user._id,
       firstName: user.firstName,
@@ -141,6 +142,60 @@ const getGoogleLogIn = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(400).json('Something went Wrong!!');
+  }
+};
+
+//Forgotten Password
+const PostForgottenPassword = async (req, res) => {
+  try {
+    const email = req.body.email;
+    const user = await User.findOne({ email: email });
+    console.log('findUser::', user);
+
+    if (!user) {
+      res.status(400).json('User Not Found!');
+      return;
+    }
+    var createPass = '';
+    var str =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890@#$%&';
+
+    for (let i = 0; i < 6; i++) {
+      var char = Math.floor(Math.random() * str.length + 1);
+      createPass += str.charAt(char);
+    }
+
+    console.log('createPass::', createPass);
+
+    // --- content for mail --- //
+    let sub = 'Reset Your Password';
+    let html = `<h3>
+                  Hello ${user.firstName}, 
+                  <br/> You forget you password, Don't worry Here your new password <u> ${createPass} </u>
+                </h3>
+            <p>If you didn't request for a new password. Then you can safely ignore this email.</p>
+            <br/>
+            <h4>Thank You</h4>`;
+
+    await mailService(user.email, sub, html);
+
+    console.log('findUser._id::::', user._id);
+    console.log('createPass::::', createPass);
+
+    await User.updateOne(
+      {
+        _id: user._id,
+      },
+      {
+        $set: {
+          password: createPass,
+        },
+      }
+    );
+    res.status(200).json('Your new password has been sent on your register mail');
+  } catch (error) {
+    console.log('forgetPassword-Error::', error);
+    res.status(400).json('Something Went Wrong!.');
   }
 };
 
@@ -199,5 +254,6 @@ module.exports = {
   getAUserByID,
   postDeleteUser,
   getLogIn,
-  getGoogleLogIn
+  getGoogleLogIn,
+  PostForgottenPassword,
 };
